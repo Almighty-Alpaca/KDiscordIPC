@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.IOException
 import java.net.SocketException
 
 /**
@@ -41,7 +42,7 @@ class SocketHandler(scope: CoroutineScope, socketSupplier: () -> Socket) {
                 if (e is DecodeError.InvalidData) {
                     throw ConnectionError.Disconnected
                 }
-            } catch (e: SocketException) {
+            } catch (e: IOException) {
                 throw ConnectionError.Disconnected
             }
         }
