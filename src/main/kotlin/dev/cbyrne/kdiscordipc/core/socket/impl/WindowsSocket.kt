@@ -3,10 +3,7 @@ package dev.cbyrne.kdiscordipc.core.socket.impl
 import dev.cbyrne.kdiscordipc.core.socket.RawPacket
 import dev.cbyrne.kdiscordipc.core.socket.Socket
 import dev.cbyrne.kdiscordipc.core.util.reverse
-import java.io.File
-import java.io.InputStream
-import java.io.OutputStream
-import java.io.RandomAccessFile
+import java.io.*
 
 /**
  * A class representing a Windows [Socket]
@@ -29,10 +26,13 @@ class WindowsSocket : Socket {
         _connected = false
     }
 
-    @Suppress("ControlFlowWithEmptyBody")
     override fun read(): RawPacket {
         while (_connected && randomAccessFile.length() == 0L) {
             Thread.sleep(50L)
+        }
+
+        if (!_connected) {
+            throw IOException("Socket is not connected")
         }
 
         val opcode = randomAccessFile.readInt().reverse()
@@ -45,6 +45,10 @@ class WindowsSocket : Socket {
     }
 
     override fun write(bytes: ByteArray) {
+        if (!_connected) {
+            throw IOException("Socket is not connected")
+        }
+
         randomAccessFile.write(bytes)
     }
 }
